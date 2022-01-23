@@ -1,0 +1,207 @@
+/**
+ *
+ * @author thaloothkhalid
+ */
+ 
+import java.util.*;
+public class main {
+
+    public static void main(String args[]) {
+        // TODO code application logic here
+        Scanner sc=new Scanner(System.in);
+        System.out.println("Lets Play 2048!\nEnter arena size: ");
+        int arena_size=sc.nextInt();
+        int[][] arena=new int[arena_size][arena_size];
+        randomAdd(arena, arena_size);
+        display(arena, arena_size);
+        System.out.print("Use W, A, S, D as inputs. Press Q to quit.\n");
+        char input=sc.next().charAt(0);
+        while(input!='q'){
+            if(input=='w')
+                wmove(arena, arena_size);
+            else if(input=='a')
+                amove(arena, arena_size);
+            else if(input=='s')
+                smove(arena, arena_size);
+            else if(input=='d')
+                dmove(arena, arena_size);
+            else
+                break;
+            int fail_check=randomAdd(arena, arena_size);
+            if(fail_check==1){
+                System.out.println("Game Over!");
+                return;
+            }
+            int win_check=display(arena, arena_size);
+            if(win_check==1){
+                System.out.println("Congrats! \n...You have successfully completed the game...");
+                return;
+            }
+            input=sc.next().charAt(0);
+        }
+        System.out.println("Thanks for playing!");
+        
+    }
+    
+    public static int display(int[][] arena, int size){
+        for(int i=0; i<size; i++)
+            System.out.print("----\t");
+        System.out.println("");
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                if(arena[i][j]==2048)
+                    return 1;
+                System.out.print(arena[i][j]+"\t");
+            }
+            System.out.println("");
+        }
+        for(int i=0; i<size; i++)
+            System.out.print("----\t");
+        System.out.println("");
+        return 0;
+    }
+    
+    public static int randomAdd(int[][] arena, int size){
+        Random rand=new Random();
+        List<Integer> empty=emptyChecker(arena, size);
+        if(empty.isEmpty()){
+            return 1;
+        }
+        int chosen_index=empty.get(rand.nextInt(empty.size()));
+        int i=chosen_index/size;
+        int j=chosen_index%size;
+        int chosen_value=rand.nextInt(2);
+        if(chosen_value==1)
+            arena[i][j]=2;
+        else
+            arena[i][j]=4;
+        return 0;
+    }
+    
+    public static List<Integer> emptyChecker(int[][] arena, int size){
+        List<Integer> list=new ArrayList();
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                if(arena[i][j]==0)
+                    list.add(i*size+j);
+            }
+        }
+        return list;
+    }
+    
+    public static void wmove(int[][] arena, int size){
+        boolean prev_comb=false;
+        for(int i=0; i<size; i++){
+            for(int j=1; j<size; j++){
+                int iter=j-1;
+                while(iter>0&&arena[iter][i]==0)
+                    iter=iter-1;
+                if(arena[j][i]!=0&&arena[j][i]==arena[iter][i]&&prev_comb==false){
+                    arena[iter][i]=2*arena[j][i];
+                    arena[j][i]=0;
+                    prev_comb=true;
+                }
+                else{
+                    if(arena[iter][i]!=0)
+                        iter=iter+1;
+                    if(j==iter){
+                        prev_comb=false;
+                    }
+                    else{
+                        arena[iter][i]=arena[j][i];
+                        arena[j][i]=0;
+                        prev_comb=false;
+                    }
+                }
+            }
+        }
+            
+    }
+    
+    public static void amove(int[][] arena, int size){
+        boolean prev_comb=false;
+        for(int i=0; i<size; i++){
+            for(int j=1; j<size; j++){
+                int iter=j-1;
+                while(iter>0&&arena[i][iter]==0)
+                    iter=iter-1;
+                if(arena[i][j]!=0&&arena[i][j]==arena[i][iter]&&prev_comb==false){
+                    arena[i][iter]=2*arena[i][j];
+                    arena[i][j]=0;
+                    prev_comb=true;
+                }
+                else{
+                    if(arena[i][iter]!=0)
+                        iter=iter+1;
+                    if(j==iter){
+                        prev_comb=false;
+                    }
+                    else{
+                        arena[i][iter]=arena[i][j];
+                        arena[i][j]=0;
+                        prev_comb=false;
+                    }
+                }
+            }
+        }
+            
+    }
+    
+    public static void smove(int[][] arena, int size){
+        boolean prev_comb=false;
+        for(int i=0; i<size; i++){
+            for(int j=size-2; j>=0; j--){
+                int iter=j+1;
+                while(iter<size-1&&arena[iter][i]==0)
+                    iter=iter+1;
+                if(arena[j][i]!=0&&arena[j][i]==arena[iter][i]&&prev_comb==false){
+                    arena[iter][i]=2*arena[j][i];
+                    arena[j][i]=0;
+                    prev_comb=true;
+                }
+                else{
+                    if(arena[iter][i]!=0)
+                        iter=iter-1;
+                    if(j==iter){
+                        prev_comb=false;
+                    }
+                    else{
+                        arena[iter][i]=arena[j][i];
+                        arena[j][i]=0;
+                        prev_comb=false;
+                    }
+                }
+            }
+        }
+            
+    }
+    
+    public static void dmove(int[][] arena, int size){
+        boolean prev_comb=false;
+        for(int i=0; i<size; i++){
+            for(int j=size-2; j>=0; j--){
+                int iter=j+1;
+                while(iter<size-1&&arena[i][iter]==0)
+                    iter=iter+1;
+                if(arena[i][j]!=0&&arena[i][j]==arena[i][iter]&&prev_comb==false){
+                    arena[i][iter]=2*arena[i][j];
+                    arena[i][j]=0;
+                    prev_comb=true;
+                }
+                else{
+                    if(arena[i][iter]!=0)
+                        iter=iter-1;
+                    if(j==iter){
+                        prev_comb=false;
+                    }
+                    else{
+                        arena[i][iter]=arena[i][j];
+                        arena[i][j]=0;
+                        prev_comb=false;
+                    }
+                }
+            }
+        }
+            
+    }
+}
